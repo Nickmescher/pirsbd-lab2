@@ -219,23 +219,51 @@ class OnlineRetailAppTest {
 
     @Test
     void parseTopNUsesDefaultWhenMissing() {
-        assertEquals(5, OnlineRetailApp.parseTopN(new String[]{"in.csv", "out"}));
+        assertEquals(5, OnlineRetailApp.parseTopN(new String[]{"topn", "in.csv", "out"}));
     }
 
     @Test
     void parseTopNReadsUserValue() {
-        assertEquals(10, OnlineRetailApp.parseTopN(new String[]{"in.csv", "out", "10"}));
+        assertEquals(10, OnlineRetailApp.parseTopN(new String[]{"topn", "in.csv", "out", "10"}));
     }
 
     @Test
     void parseTopNRejectsNonPositive() {
         assertThrows(IllegalArgumentException.class,
-                () -> OnlineRetailApp.parseTopN(new String[]{"in.csv", "out", "0"}));
+                () -> OnlineRetailApp.parseTopN(new String[]{"topn", "in.csv", "out", "0"}));
     }
 
     @Test
     void parseTopNRejectsNonNumeric() {
         assertThrows(NumberFormatException.class,
-                () -> OnlineRetailApp.parseTopN(new String[]{"in.csv", "out", "abc"}));
+                () -> OnlineRetailApp.parseTopN(new String[]{"topn", "in.csv", "out", "abc"}));
+    }
+
+    @Test
+    void parseModeReadsTopn() {
+        assertEquals("topn", OnlineRetailApp.parseMode(new String[]{"topn", "in.csv", "out"}));
+    }
+
+    @Test
+    void parseModeReadsAnalytics() {
+        assertEquals("analytics", OnlineRetailApp.parseMode(new String[]{"analytics", "in.csv", "out"}));
+    }
+
+    @Test
+    void parseModeIsCaseInsensitive() {
+        assertEquals("topn", OnlineRetailApp.parseMode(new String[]{"TOPN", "in.csv", "out"}));
+        assertEquals("analytics", OnlineRetailApp.parseMode(new String[]{"Analytics", "in.csv", "out"}));
+    }
+
+    @Test
+    void parseModeRejectsUnknown() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> OnlineRetailApp.parseMode(new String[]{"report", "in.csv", "out"}));
+        assertTrue(e.getMessage().contains("report"));
+    }
+
+    @Test
+    void parseModeRejectsMissing() {
+        assertThrows(IllegalArgumentException.class, () -> OnlineRetailApp.parseMode(new String[]{}));
     }
 }
