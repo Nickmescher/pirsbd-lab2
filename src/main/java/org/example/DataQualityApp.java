@@ -28,25 +28,11 @@ import org.example.steps.ZeroQuantityStep;
 
 public class DataQualityApp {
 
-    public static void main(String[] args) throws IOException {
-        if (args.length < 2) {
-            System.err.println("Usage: DataQualityApp <inputCsvPath> <outputMdPath>");
-            System.exit(1);
-        }
-        SparkSession spark = SparkSession.builder()
-                .appName("OnlineRetailDataQuality")
-                .getOrCreate();
-
-        run(spark, args[0], args[1]);
-
-        spark.stop();
-    }
-
     // Строит отчёт о качестве данных и пишет его в markdown-файл.
-    // Вызывается из main этого класса или из OnlineRetailApp.main (тогда та же SparkSession переиспользуется).
+    // Вызывается из OnlineRetailApp.main (режим analytics), та же SparkSession переиспользуется.
     // Работа устроена как конвейер шагов: каждый шаг выполняет свой SQL-запрос,
     // забирает результат на драйвер и возвращает готовую секцию отчёта.
-    public static void run(SparkSession spark, String inputPath, String outputPath) throws IOException {
+    static void run(SparkSession spark, String inputPath, String outputPath) throws IOException {
         Dataset<Row> raw = spark.read()
                 .option("header", "true")
                 .option("multiLine", "true")
