@@ -36,7 +36,8 @@ public class OnlineRetailApp {
                 .filter(col("InvoiceNo").isNotNull())
                 .filter(not(col("InvoiceNo").startsWith("C")))
                 .filter(col("Quantity").gt(0))
-                .filter(col("UnitPrice").gt(0));
+                .filter(col("UnitPrice").gt(0))
+                .dropDuplicates();
 
         // 1. Топ-5 самых популярных товаров по общему количеству проданных единиц.
         Dataset<Row> topProducts = df
